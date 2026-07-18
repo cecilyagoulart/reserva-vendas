@@ -1,0 +1,34 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+
+
+<h1>Listagem de Reservas</h1>
+
+*{ Formulário de Busca }*
+<form action="@{Reservas.listar}" method="GET">
+    <input type="text" name="termo" value="${termo}" placeholder="Nome do cliente ou produto" />
+    <input type="submit" value="Buscar" />
+</form>
+
+<br/>
+<a href="@{Reservas.forms}">Nova Reserva</a>
+<hr />
+
+*{ Laço de Repetição Simples }*
+#{list items:reservas, as:'res'}
+    <p><b>Cliente:</b> ${res.nomeCliente}</p>
+    <p><b>Quantidade:</b> ${res.quantidade}</p>
+    <p><b>Produto:</b> ${res.produto?.nomeProduto}</p>
+    
+    <a href="@{Reservas.editar(res.id)}">Editar</a> | 
+    <a href="@{Reservas.remover(res.id)}">Remover</a>
+    <hr />
+#{/list}
+
+*{ Mensagem caso não existam reservas }*
+#{else}
+    <p>Nenhuma reserva encontrada.</p>
+#{/else}
+
+

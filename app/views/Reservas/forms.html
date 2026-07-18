@@ -1,0 +1,30 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>#{if r?.id} Edição #{/if}#{else} Nova #{/else} Reserva</h1>
+
+<form action="@{Reservas.salvar}" method="post">
+    *{ Campo oculto para o ID, essencial para editar }*
+    <input type="hidden" name="r.id" value="${r?.id}">
+
+    <label>Cliente:</label>
+    <input type="text" name="r.nomeCliente" value="${r?.nomeCliente}">
+<br>
+    <label>Quantidade: </label>
+    <input type="number" name="r.quantidade" value="${r?.quantidade}">
+	<br>
+    <label>Produto:</label>
+    <select name="r.produto.id">
+        #{list items:produtos, as:'prod'}
+		<option value="${prod.id}" ${prod.id == r?.produto?.id ? 'selected' : ''}>
+		    ${prod.nomeProduto}
+		</option>            
+        #{/list}
+    </select>
+	<br>
+        <button type="submit" class="btn btn-success">Gravar</button>
+		<br>
+		 <a href="@{Reservas.formProduto}" class="btn btn-outline-info">Adicionar Novo Produto</a>
+    </form>
+	
+<a href="@{Reservas.listar}">Retornar</a>
