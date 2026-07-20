@@ -18,7 +18,7 @@
                 <th>Produto</th>
                 <th>Preço</th>
                 <th>Estoque</th>
-                <th class="text-end">Repor Estoque</th>
+                <th class="text-end">Ajustar Estoque</th>
                 <th class="text-end">Ações</th>
             </tr>
         </thead>
@@ -37,12 +37,19 @@
                     #{else}
                         <span class="badge badge-status-ativo">${prod.estoque} un.</span>
                     #{/else}
+                </td>
                 <td class="text-end">
-                    <form action="@{Reservas.adicionarEstoque(prod.id)}" method="post" class="d-flex justify-content-end gap-2">
+                    <form method="post" class="d-flex justify-content-end gap-2">
                         <input type="number" name="quantidade" min="1" placeholder="Qtd"
                                class="form-control form-control-sm" style="width: 90px;" required>
-                        <button type="submit" class="btn btn-brand btn-sm">
-                            <i class="bi bi-plus-lg"></i> Adicionar
+                        <button type="submit" formaction="@{Reservas.adicionarEstoque(prod.id)}"
+                                class="btn btn-brand btn-sm" title="Entrada de estoque">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                        <button type="submit" formaction="@{Reservas.removerEstoque(prod.id)}"
+                                class="btn btn-outline-danger btn-sm" title="Venda direta / baixa manual"
+                                onclick="return confirm('Dar baixa manual neste estoque (venda direta, sem reserva)?');">
+                            <i class="bi bi-dash-lg"></i>
                         </button>
                     </form>
                 </td>
@@ -55,7 +62,6 @@
                         <i class="bi bi-trash"></i>
                     </a>
                 </td>
-            </tr>
             </tr>
             #{/list}
 

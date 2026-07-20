@@ -25,25 +25,65 @@ public class Reservas extends Controller {
 	}
 	
 	public static void salvar(Reserva r) {
-		// Verifica estoque antes de gravar
-		 if (r.id == null) {
-		        if (r.produto != null) {
-		            Produto produtoAtual = Produto.findById(r.produto.id);
-		            
-		            // Validação de estoque para o novo pedido
-		            if (produtoAtual == null || produtoAtual.estoque < r.quantidade) {
-		                flash.error("Estoque insuficiente! Disponível: " + (produtoAtual != null ? produtoAtual.estoque : 0));
-		                List<Produto> produtos = Produto.findAll();
-		                render("Reservas/forms.html", r, produtos);
-		                return;
-		            }
-		            
-		            // Subtração: Só acontece aqui, na primeira vez que salva
-		            produtoAtual.estoque -= r.quantidade;
-		            produtoAtual.save();
-		        }
-		    }
-		
+		if (r.produto != null) {
+			Produto produtoNovo = Produto.findById(r.produto.id);
+
+			if (r.id == null) {
+				
+				if (produtoNovo == null || produtoNovo.estoque < r.quantidade) {
+					flash.error("Estoque insuficiente! Disponível: " + (produtoNovo != null ? produtoNovo.estoque : 0));
+					List<Produto> produtos = Produto.findAll();
+					render("Reservas/forms.html", r, produtos);
+					return;
+				}
+
+				
+				produtoNovo.estoque -= r.quantidade;
+				produtoNovo.save();
+
+			} else {
+				
+				Reserva original = Reserva.findById(r.id);
+
+				if (original != null) {
+					Produto produtoAntigo = original.produto;
+					boolean trocouProduto = produtoAntigo == null
+							|| produtoNovo == null
+							|| !produtoAntigo.id.equals(produtoNovo.id);
+
+					if (!trocouProduto) {
+						
+						int diferenca = r.quantidade - original.quantidade;
+						if (diferenca > 0 && produtoNovo.estoque < diferenca) {
+							flash.error("Estoque insuficiente para aumentar a quantidade! Disponível: " + produtoNovo.estoque);
+							List<Produto> produtos = Produto.findAll();
+							render("Reservas/forms.html", r, produtos);
+							return;
+						}
+						produtoNovo.estoque -= diferenca;
+						produtoNovo.save();
+
+					} else {
+						
+						if (produtoNovo == null || produtoNovo.estoque < r.quantidade) {
+							flash.error("Estoque insuficiente! Disponível: " + (produtoNovo != null ? produtoNovo.estoque : 0));
+							List<Produto> produtos = Produto.findAll();
+							render("Reservas/forms.html", r, produtos);
+							return;
+						}
+						
+						if (produtoAntigo != null) {
+							produtoAntigo.estoque += original.quantidade;
+							produtoAntigo.save();
+						}
+						
+						produtoNovo.estoque -= r.quantidade;
+						produtoNovo.save();
+					}
+				}
+			}
+		}
+
 		r.save();
 		flash.success("Produto reservado com sucesso!");
 		listar(null);
@@ -61,7 +101,7 @@ public class Reservas extends Controller {
 			r.status = Status.INATIVO;
 			r.save();
 			
-			// Devolve o estoque ao remover a reserva
+			
 			if (r.produto != null) {
 				Produto p = Produto.findById(r.produto.id);
 				if (p != null) {
@@ -81,12 +121,22 @@ public class Reservas extends Controller {
 	}
 	
 	public static void salvarProduto(Produto p) {
-		p.save();
-		flash.success("Produto cadastrado!");
+		if (p.id != null) {
+			
+			Produto original = Produto.findById(p.id);
+			if (original != null) {
+				p.estoque = original.estoque;
+			}
+			p.save();
+			flash.success("Produto atualizado!");
+		} else {
+			p.save();
+			flash.success("Produto cadastrado!");
+		}
 		forms();
 	}
 	
-	// ===== NOVO: controle de estoque =====
+	
 	
 	public static void listarProdutos() {
 		List<Produto> produtos = Produto.findAll();
@@ -102,30 +152,43 @@ public class Reservas extends Controller {
 		}
 		listarProdutos();
 	}
-	// ===== NOVO: editar e excluir produto =====
-	
-		public static void editarProduto(Long id) {
-			Produto p = Produto.findById(id);
-			renderTemplate("Reservas/formProduto.html", p);
-		}
-		
-		public static void removerProduto(Long id) {
-			Produto p = Produto.findById(id);
-			if (p != null) {
-				long qtdAtivas = Reserva.count("produto.id = ?1 and status != ?2", id, Status.INATIVO);
-				if (qtdAtivas > 0) {
-					flash.error("Não é possível excluir '" + p.nomeProduto + "': existem reservas ativas vinculadas a ele.");
-				} else {
-					// Remove definitivamente as reservas inativas (histórico) vinculadas a este produto,
-					// para liberar a exclusão sem violar a integridade do banco
-					List<Reserva> reservasInativas = Reserva.find("produto.id = ?1", id).fetch();
-					for (Reserva r : reservasInativas) {
-						r.delete();
-					}
-					p.delete();
-					flash.success("Produto excluído com sucesso!");
-				}
+
+	public static void removerEstoque(Long id, int quantidade) {
+		Produto p = Produto.findById(id);
+		if (p != null && quantidade > 0) {
+			if (p.estoque < quantidade) {
+				flash.error("Estoque insuficiente para dar baixa em '" + p.nomeProduto + "'. Disponível: " + p.estoque);
+			} else {
+				p.estoque -= quantidade;
+				p.save();
+				flash.success("Baixa de " + quantidade + " un. em '" + p.nomeProduto + "' registrada!");
 			}
-			listarProdutos();
 		}
+		listarProdutos();
+	}
+	
+
+	public static void editarProduto(Long id) {
+		Produto p = Produto.findById(id);
+		renderTemplate("Reservas/formProduto.html", p);
+	}
+
+	public static void removerProduto(Long id) {
+		Produto p = Produto.findById(id);
+		if (p != null) {
+			long qtdAtivas = Reserva.count("produto.id = ?1 and status != ?2", id, Status.INATIVO);
+			if (qtdAtivas > 0) {
+				flash.error("Não é possível excluir '" + p.nomeProduto + "': existem reservas ativas vinculadas a ele.");
+			} else {
+				
+				List<Reserva> reservasInativas = Reserva.find("produto.id = ?1", id).fetch();
+				for (Reserva r : reservasInativas) {
+					r.delete();
+				}
+				p.delete();
+				flash.success("Produto excluído com sucesso!");
+			}
 		}
+		listarProdutos();
+	}
+}

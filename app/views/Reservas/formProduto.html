@@ -30,7 +30,11 @@
                     <div class="mb-4">
                         <label class="form-label">Estoque inicial</label>
                         <input type="number" name="p.estoque" value="${p?.estoque}"
-                               class="form-control" placeholder="0" min="0" required>
+                               class="form-control" placeholder="0" min="0" required
+                               ${p?.id ? 'readonly' : ''}>
+                        #{if p?.id}
+                            <div class="form-text">Para alterar o estoque, use "Adicionar Estoque" na tela de Estoque.</div>
+                        #{/if}
                     </div>
 
                     <div class="d-flex gap-2">
