@@ -1,34 +1,84 @@
 #{extends 'main.html' /}
-#{set title:'Home' /}
+#{set title:'Reservas' /}
 
+<div class="page-header">
+    <div>
+        <h1><i class="bi bi-clipboard-data"></i> Controle de Reservas</h1>
+        <p class="text-muted mb-0">Gestão interna de vendas reservadas</p>
+    </div>
+    <a href="@{Reservas.forms}" class="btn btn-brand">
+        <i class="bi bi-plus-lg"></i> Nova Reserva
+    </a>
+</div>
 
+<!-- Indicador rápido -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-icon"><i class="bi bi-bag-check-fill"></i></div>
+            <div>
+                <div class="stat-value">${reservas.size()}</div>
+                <div class="text-muted small">Reservas listadas</div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<h1>Listagem de Reservas</h1>
-
-*{ Formulário de Busca }*
-<form action="@{Reservas.listar}" method="GET">
-    <input type="text" name="termo" value="${termo}" placeholder="Nome do cliente ou produto" />
-    <input type="submit" value="Buscar" />
+<form action="@{Reservas.listar}" method="GET" class="d-flex mb-3" role="search">
+    <input type="text" name="termo" value="${termo}" class="form-control me-2"
+           placeholder="Buscar por cliente ou produto...">
+    <button type="submit" class="btn btn-brand">
+        <i class="bi bi-search"></i>
+    </button>
 </form>
 
-<br/>
-<a href="@{Reservas.forms}">Nova Reserva</a>
-<hr />
+<div class="card table-card">
+    <table class="table table-hover align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Produto</th>
+                <th>Qtd</th>
+                <th>Obs.</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th class="text-end">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            #{list items:reservas, as:'res'}
+            <tr>
+                <td>${res.nomeCliente}</td>
+                <td>${res.produto?.nomeProduto}</td>
+                <td>${res.quantidade}</td>
+                <td class="small text-muted">${res.observacao}</td>
+                <td>${res.data}</td>
+                <td>
+                    <span class="badge #{if res.status == 'ATIVO'}badge-status-ativo#{/if}#{else}badge-status-inativo#{/else}">
+                        ${res.status}
+                    </span>
+                </td>
+                <td class="text-end">
+                    <a href="@{Reservas.editar(res.id)}" class="btn btn-outline-dark btn-sm">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="@{Reservas.remover(res.id)}" class="btn btn-outline-danger btn-sm"
+                       onclick="return confirm('Remover esta reserva?');">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            #{/list}
 
-*{ Laço de Repetição Simples }*
-#{list items:reservas, as:'res'}
-    <p><b>Cliente:</b> ${res.nomeCliente}</p>
-    <p><b>Quantidade:</b> ${res.quantidade}</p>
-    <p><b>Produto:</b> ${res.produto?.nomeProduto}</p>
-    
-    <a href="@{Reservas.editar(res.id)}">Editar</a> | 
-    <a href="@{Reservas.remover(res.id)}">Remover</a>
-    <hr />
-#{/list}
-
-*{ Mensagem caso não existam reservas }*
-#{else}
-    <p>Nenhuma reserva encontrada.</p>
-#{/else}
-
+            #{else}
+            <tr>
+                <td colspan="7" class="text-center text-muted py-4">
+                    <i class="bi bi-inbox display-6 d-block mb-2"></i>
+                    Nenhuma reserva encontrada.
+                </td>
+            </tr>
+            #{/else}
+        </tbody>
+    </table>
+</div>
 

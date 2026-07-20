@@ -1,30 +1,60 @@
 #{extends 'main.html' /}
-#{set title:'Home' /}
+#{set title:'Nova Reserva' /}
 
-<h1>#{if r?.id} Edição #{/if}#{else} Nova #{/else} Reserva</h1>
+<div class="page-header">
+    <div>
+        <h1>
+            <i class="bi bi-bag-plus"></i>
+            #{if r?.id} Editar Reserva #{/if}#{else} Nova Reserva #{/else}
+        </h1>
+    </div>
+</div>
 
-<form action="@{Reservas.salvar}" method="post">
-    *{ Campo oculto para o ID, essencial para editar }*
-    <input type="hidden" name="r.id" value="${r?.id}">
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card form-card">
+            <div class="card-body p-4">
+                <form action="@{Reservas.salvar}" method="post">
+                    <input type="hidden" name="r.id" value="${r?.id}">
 
-    <label>Cliente:</label>
-    <input type="text" name="r.nomeCliente" value="${r?.nomeCliente}">
-<br>
-    <label>Quantidade: </label>
-    <input type="number" name="r.quantidade" value="${r?.quantidade}">
-	<br>
-    <label>Produto:</label>
-    <select name="r.produto.id">
-        #{list items:produtos, as:'prod'}
-		<option value="${prod.id}" ${prod.id == r?.produto?.id ? 'selected' : ''}>
-		    ${prod.nomeProduto}
-		</option>            
-        #{/list}
-    </select>
-	<br>
-        <button type="submit" class="btn btn-success">Gravar</button>
-		<br>
-		 <a href="@{Reservas.formProduto}" class="btn btn-outline-info">Adicionar Novo Produto</a>
-    </form>
-	
-<a href="@{Reservas.listar}">Retornar</a>
+                    <div class="mb-3">
+                        <label class="form-label">Cliente</label>
+                        <input type="text" name="r.nomeCliente" value="${r?.nomeCliente}"
+                               class="form-control" placeholder="Nome do cliente" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Produto</label>
+                        <select name="r.produto.id" class="form-select">
+                            #{list items:produtos, as:'prod'}
+                            <option value="${prod.id}" ${prod.id == r?.produto?.id ? 'selected' : ''}>
+                                ${prod.nomeProduto} — R$ ${prod.preco}
+                            </option>
+                            #{/list}
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Quantidade</label>
+                        <input type="number" name="r.quantidade" value="${r?.quantidade}"
+                               class="form-control" min="1" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Observação / Sabor</label>
+                        <textarea name="r.observacao" class="form-control" rows="3"
+                                  placeholder="Ex: sabor Pudim, entregar de 14:30">${r?.observacao}</textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-brand flex-fill">
+                            <i class="bi bi-check-lg"></i> Gravar Reserva
+                        </button>
+                        <a href="@{Reservas.listar}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

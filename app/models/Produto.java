@@ -10,6 +10,7 @@ public class Produto extends Model {
 	
     public String nomeProduto;
     public double preco;
+    public int estoque;
     
    
     public String toString() {

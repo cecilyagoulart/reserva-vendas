@@ -1,0 +1,71 @@
+#{extends 'main.html' /}
+#{set title:'Estoque de Produtos' /}
+
+<div class="page-header">
+    <div>
+        <h1><i class="bi bi-boxes"></i> Estoque de Produtos</h1>
+        <p class="text-muted mb-0">Consulte e reabasteça seus produtos</p>
+    </div>
+    <a href="@{Reservas.formProduto}" class="btn btn-brand">
+        <i class="bi bi-plus-lg"></i> Novo Produto
+    </a>
+</div>
+
+<div class="card table-card">
+    <table class="table table-hover align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Preço</th>
+                <th>Estoque</th>
+                <th class="text-end">Repor Estoque</th>
+                <th class="text-end">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            #{list items:produtos, as:'prod'}
+            <tr>
+                <td>${prod.nomeProduto}</td>
+                <td>R$ ${prod.preco}</td>
+                <td>
+                    #{if prod.estoque <= 0}
+                        <span class="badge badge-status-inativo">Esgotado</span>
+                    #{/if}
+                    #{elseif prod.estoque <= 5}
+                        <span class="badge bg-warning text-dark">${prod.estoque} un. (baixo)</span>
+                    #{/elseif}
+                    #{else}
+                        <span class="badge badge-status-ativo">${prod.estoque} un.</span>
+                    #{/else}
+                <td class="text-end">
+                    <form action="@{Reservas.adicionarEstoque(prod.id)}" method="post" class="d-flex justify-content-end gap-2">
+                        <input type="number" name="quantidade" min="1" placeholder="Qtd"
+                               class="form-control form-control-sm" style="width: 90px;" required>
+                        <button type="submit" class="btn btn-brand btn-sm">
+                            <i class="bi bi-plus-lg"></i> Adicionar
+                        </button>
+                    </form>
+                </td>
+                <td class="text-end">
+                    <a href="@{Reservas.editarProduto(prod.id)}" class="btn btn-outline-dark btn-sm">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="@{Reservas.removerProduto(prod.id)}" class="btn btn-outline-danger btn-sm"
+                       onclick="return confirm('Excluir este produto?');">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            </tr>
+            #{/list}
+
+            #{else}
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">
+                    Nenhum produto cadastrado.
+                </td>
+            </tr>
+            #{/else}
+        </tbody>
+    </table>
+</div>

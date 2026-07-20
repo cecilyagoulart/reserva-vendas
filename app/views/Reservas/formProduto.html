@@ -1,20 +1,49 @@
 #{extends 'main.html' /}
-#{set title:'Home' /}
+#{set title:'Cadastro de Produto' /}
 
+<div class="page-header">
+    <div>
+        <h1><i class="bi bi-box-seam"></i>
+            #{if p?.id} Editar Produto #{/if}#{else} Cadastro de Produto #{/else}
+        </h1>
+    </div>
+</div>
 
-<form action="@{Reservas.salvarProduto}" method="post">
-    
-    *{ Campo oculto para o ID, necessário para identificar se é edição }*
-    <input type="hidden" name="p.id" value="${p?.id}">
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card form-card">
+            <div class="card-body p-4">
+                <form action="@{Reservas.salvarProduto}" method="post">
+                    <input type="hidden" name="p.id" value="${p?.id}">
 
-    <label>Nome do Produto:</label><br/>
-    <input type="text" name="p.nomeProduto" value="${p?.nomeProduto}"><br/><br/>
+                    <div class="mb-3">
+                        <label class="form-label">Nome do Produto</label>
+                        <input type="text" name="p.nomeProduto" value="${p?.nomeProduto}"
+                               class="form-control" placeholder="Ex: Dindin de Pudim" required>
+                    </div>
 
-    <label>Preço:</label><br/>
-    <input type="number" step="0.01" name="p.preco" value="${p?.preco}"><br/><br/>
+                    <div class="mb-4">
+                        <label class="form-label">Preço (R$)</label>
+                        <input type="number" step="0.01" name="p.preco" value="${p?.preco}"
+                               class="form-control" placeholder="0.00" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Estoque inicial</label>
+                        <input type="number" name="p.estoque" value="${p?.estoque}"
+                               class="form-control" placeholder="0" min="0" required>
+                    </div>
 
-    <input type="submit" value="Salvar Produto">
-</form>
-
-<br/>
-<a href="forms.html">Voltar para o formulário de Reserva</a>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-brand flex-fill">
+                            <i class="bi bi-check-lg"></i>
+                            #{if p?.id} Atualizar Produto #{/if}#{else} Salvar Produto #{/else}
+                        </button>
+                        <a href="@{Reservas.listarProdutos}" class="btn btn-outline-secondary">
+                            Voltar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
