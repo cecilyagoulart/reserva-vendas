@@ -1,10 +1,14 @@
 package controllers;
 import java.util.List;
+
 import models.Produto;
 import models.Reserva;
 import models.Status;
 import play.mvc.Controller;
+import play.mvc.With;
+import security.Seguranca;
 
+@With(Seguranca.class)
 public class Reservas extends Controller {
 
 	public static void forms() {
