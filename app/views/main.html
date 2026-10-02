@@ -16,37 +16,50 @@
     <div class="app-wrapper">
 
         
-        <div class="sidebar">
-            <div class="brand d-flex align-items-center gap-2">
-                <img src="@{'/public/images/logo info.png'}" alt="Logo" style="width: 32px; height: 32px; object-fit: contain;">
-                <div>
-                    INFO4V Reservas
-                    <div class="small opacity-75" style="font-weight:400;">Painel Interno</div>
-                </div>
-            </div>
-            <ul class="nav flex-column mt-2">
-                <li class="nav-item">
-                    <a class="nav-link" href="@{Reservas.listar}">
-                        <i class="bi bi-list-ul"></i> Reservas
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="@{Reservas.forms}">
-                        <i class="bi bi-plus-circle"></i> Nova Reserva
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="@{Reservas.formProduto}">
-                        <i class="bi bi-box-seam"></i> Novo Produto
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="@{Reservas.listarProdutos}">
-                        <i class="bi bi-boxes"></i> Estoque
-                    </a>
-                </li>
-            </ul>
-        </div>
+		<div class="sidebar">
+		    <div class="brand d-flex align-items-center gap-2">
+		        <img src="@{'/public/images/logo info.png'}" alt="Logo" style="width: 32px; height: 32px; object-fit: contain;">
+		        <div>
+		            INFO4V Reservas
+		            <div class="small opacity-75" style="font-weight:400;">Painel Interno</div>
+		        </div>
+		    </div>
+		    <ul class="nav flex-column mt-2">
+		        <li class="nav-item">
+		            <a class="nav-link" href="@{Reservas.listar}">
+		                <i class="bi bi-list-ul"></i> Reservas
+		            </a>
+		        </li>
+		        <li class="nav-item">
+		            <a class="nav-link" href="@{Reservas.forms}">
+		                <i class="bi bi-plus-circle"></i> Nova Reserva
+		            </a>
+		        </li>
+		        #{if session['perfilUsuario'] == 'ADMIN'} 
+		        <li class="nav-item">
+		            <a class="nav-link" href="@{Reservas.formProduto}">
+		                <i class="bi bi-box-seam"></i> Novo Produto
+		            </a>
+		        </li>
+		        #{/if} 
+		        <li class="nav-item">
+		            <a class="nav-link" href="@{Reservas.listarProdutos}">
+		                <i class="bi bi-boxes"></i> Estoque
+		            </a>
+		        </li>
+		    </ul>
+
+		    #{if session['usuarioLogado']}
+		    <div class="sidebar-user">
+		        <div class="small opacity-75">Logado como</div>
+		        <div class="fw-semibold">${session['nomeUsuario']}</div>
+		        <span class="badge badge-status-ativo mb-2">${session['perfilUsuario']}</span>
+		        <a href="@{Logins.sair}" class="btn btn-outline-light btn-sm w-100">
+		            <i class="bi bi-box-arrow-right"></i> Sair
+		        </a>
+		    </div>
+		    #{/if}
+		</div>
 
         
         <div class="main-content">

@@ -17,7 +17,17 @@ body {
     display: flex;
     min-height: 100vh;
 }
+.sidebar {
+    display: flex;
+    flex-direction: column;
+}
 
+.sidebar-user {
+    margin-top: auto;
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,.1);
+    color: #eaf1fa;
+}
 .sidebar {
     width: 240px;
     background-color: var(--sidebar-bg);

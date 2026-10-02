@@ -6,9 +6,11 @@
         <h1><i class="bi bi-boxes"></i> Estoque de Produtos</h1>
         <p class="text-muted mb-0">Consulte e reabasteça seus produtos</p>
     </div>
+    #{if session['perfilUsuario'] == 'ADMIN'} 
     <a href="@{Reservas.formProduto}" class="btn btn-brand">
         <i class="bi bi-plus-lg"></i> Novo Produto
     </a>
+    #{/if} 
 </div>
 
 <div class="card table-card">
@@ -18,8 +20,10 @@
                 <th>Produto</th>
                 <th>Preço</th>
                 <th>Estoque</th>
+                #{if session['perfilUsuario'] == 'ADMIN'} 
                 <th class="text-end">Ajustar Estoque</th>
                 <th class="text-end">Ações</th>
+                #{/if} 
             </tr>
         </thead>
         <tbody>
@@ -38,6 +42,7 @@
                         <span class="badge badge-status-ativo">${prod.estoque} un.</span>
                     #{/else}
                 </td>
+                #{if session['perfilUsuario'] == 'ADMIN'} 
                 <td class="text-end">
                     <form method="post" class="d-flex justify-content-end gap-2">
                         <input type="number" name="quantidade" min="1" placeholder="Qtd"
@@ -62,6 +67,7 @@
                         <i class="bi bi-trash"></i>
                     </a>
                 </td>
+                #{/if} 
             </tr>
             #{/list}
 

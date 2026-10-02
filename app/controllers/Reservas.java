@@ -7,6 +7,7 @@ import models.Status;
 import play.mvc.Controller;
 import play.mvc.With;
 import security.Seguranca;
+import security.Administrador;
 
 @With(Seguranca.class)
 public class Reservas extends Controller {
@@ -98,7 +99,7 @@ public class Reservas extends Controller {
 		List<Produto>produtos = Produto.findAll();
 		renderTemplate("Reservas/forms.html", r, produtos);
 	}
-	
+	@Administrador
 	public static void remover(Long id) {
 		Reserva r = Reserva.findById(id);
 		if(r!= null) {
@@ -118,12 +119,12 @@ public class Reservas extends Controller {
 		}
 		listar(null);
 	}
-	
+	@Administrador
 	public static void formProduto() {
 		Produto p = new Produto();
 		renderTemplate("Reservas/formProduto.html", p);
 	}
-	
+	@Administrador
 	public static void salvarProduto(Produto p) {
 		if (p.id != null) {
 			
@@ -146,7 +147,7 @@ public class Reservas extends Controller {
 		List<Produto> produtos = Produto.findAll();
 		render(produtos);
 	}
-	
+	@Administrador
 	public static void adicionarEstoque(Long id, int quantidade) {
 		Produto p = Produto.findById(id);
 		if (p != null && quantidade > 0) {
@@ -156,7 +157,7 @@ public class Reservas extends Controller {
 		}
 		listarProdutos();
 	}
-
+	@Administrador
 	public static void removerEstoque(Long id, int quantidade) {
 		Produto p = Produto.findById(id);
 		if (p != null && quantidade > 0) {
@@ -171,12 +172,12 @@ public class Reservas extends Controller {
 		listarProdutos();
 	}
 	
-
+	@Administrador
 	public static void editarProduto(Long id) {
 		Produto p = Produto.findById(id);
 		renderTemplate("Reservas/formProduto.html", p);
 	}
-
+	@Administrador
 	public static void removerProduto(Long id) {
 		Produto p = Produto.findById(id);
 		if (p != null) {

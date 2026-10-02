@@ -11,7 +11,7 @@
     </a>
 </div>
 
-<!-- Indicador rápido -->
+
 <div class="row g-3 mb-4">
     <div class="col-md-4">
         <div class="stat-card d-flex align-items-center gap-3">
@@ -62,10 +62,12 @@
                     <a href="@{Reservas.editar(res.id)}" class="btn btn-outline-dark btn-sm">
                         <i class="bi bi-pencil"></i>
                     </a>
+					#{if session['perfilUsuario'] == 'ADMIN'}
                     <a href="@{Reservas.remover(res.id)}" class="btn btn-outline-danger btn-sm"
                        onclick="return confirm('Remover esta reserva?');">
                         <i class="bi bi-trash"></i>
                     </a>
+					#{/if}
                 </td>
             </tr>
             #{/list}
