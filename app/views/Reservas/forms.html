@@ -5,7 +5,7 @@
     <div>
         <h1>
             <i class="bi bi-bag-plus"></i>
-            #{if r?.id} Editar Reserva #{/if}#{else} Nova Reserva #{/else}
+          #{if r?.id || idReserva} Editar Reserva #{/if}#{else} Nova Reserva #{/else}
         </h1>
     </div>
 </div>
@@ -22,7 +22,7 @@
         <div class="card form-card">
             <div class="card-body p-4">
                 <form action="@{Reservas.salvar}" method="post">
-                    <input type="hidden" name="r.id" value="${r?.id}">
+                    <input type="hidden" name="idReserva" value="${r?.id ?: idReserva}">
 
                     <div class="mb-3">
                         <label class="form-label">Cliente</label>

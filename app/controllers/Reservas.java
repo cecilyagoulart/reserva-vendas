@@ -36,72 +36,62 @@ public class Reservas extends Controller {
 		render(reservas, termo);
 	}
 
-	public static void salvar(@Valid Reserva r) {
-		if (validation.hasErrors()) {
-			List<Produto> produtos = Produto.findAll();
-			renderTemplate("Reservas/forms.html", r, produtos);
-		}
+	public static void salvar(@Valid Reserva r, Long idReserva) {
 
-		if (r.produto != null) {
-			Produto produtoNovo = Produto.findById(r.produto.id);
-
-			if (r.id == null) {
-
-				if (produtoNovo == null || produtoNovo.estoque < r.quantidade) {
-					flash.now("error", "Estoque insuficiente! Disponível: " + (produtoNovo != null ? produtoNovo.estoque : 0));
-					List<Produto> produtos = Produto.findAll();
-					render("Reservas/forms.html", r, produtos);
-					return;
-				}
-
-				produtoNovo.estoque -= r.quantidade;
-				produtoNovo.save();
-
-			} else {
-
-				Reserva original = Reserva.findById(r.id);
-
-				if (original != null) {
-					Produto produtoAntigo = original.produto;
-					boolean trocouProduto = produtoAntigo == null
-							|| produtoNovo == null
-							|| !produtoAntigo.id.equals(produtoNovo.id);
-
-					if (!trocouProduto) {
-
-						int diferenca = r.quantidade - original.quantidade;
-						if (diferenca > 0 && produtoNovo.estoque < diferenca) {
-							flash.now("error", "Estoque insuficiente para aumentar a quantidade! Disponível: " + produtoNovo.estoque);
-							List<Produto> produtos = Produto.findAll();
-							render("Reservas/forms.html", r, produtos);
-							return;
-						}
-						produtoNovo.estoque -= diferenca;
-						produtoNovo.save();
-
-					} else {
-
-						if (produtoNovo == null || produtoNovo.estoque < r.quantidade) {
-							flash.now("error", "Estoque insuficiente! Disponível: " + (produtoNovo != null ? produtoNovo.estoque : 0));
-							List<Produto> produtos = Produto.findAll();
-							render("Reservas/forms.html", r, produtos);
-							return;
-						}
-
-						if (produtoAntigo != null) {
-							produtoAntigo.estoque += original.quantidade;
-							produtoAntigo.save();
-						}
-
-						produtoNovo.estoque -= r.quantidade;
-						produtoNovo.save();
-					}
-				}
+		// Se veio um id, é edição: busca a reserva como ela está no banco
+		Reserva original = null;
+		if (idReserva != null) {
+			original = Reserva.findById(idReserva);
+			if (original == null || original.status == Status.INATIVO) {
+				flash.error("Reserva não encontrada.");
+				listar(null);
 			}
 		}
 
-		r.save();
-		flash.success("Produto reservado com sucesso!");
+		// Regra de negócio: a quantidade não pode passar do estoque disponível
+		if (!validation.hasErrors()) {
+			Produto produto = Produto.findById(r.produto.id);
+			int disponivel = produto.estoque;
+
+			// Na edição do mesmo produto, o que já estava reservado volta a contar
+			if (original != null && original.produto != null && original.produto.id.equals(produto.id)) {
+				disponivel += original.quantidade;
+			}
+
+			if (r.quantidade > disponivel) {
+				validation.addError("r.quantidade", "Estoque insuficiente. Disponível: " + disponivel + " un.");
+			}
+		}
+
+		if (validation.hasErrors()) {
+			List<Produto> produtos = Produto.findAll();
+			renderTemplate("Reservas/forms.html", r, produtos, idReserva);
+		}
+
+		Produto produto = Produto.findById(r.produto.id);
+
+		if (original == null) {
+			// Nova reserva: dá baixa no estoque
+			produto.estoque -= r.quantidade;
+			produto.save();
+			r.save();
+			flash.success("Reserva registrada com sucesso!");
+		} else {
+			// Edição: devolve o estoque antigo e depois debita o novo
+			if (original.produto != null) {
+				original.produto.estoque += original.quantidade;
+				original.produto.save();
+			}
+			produto.estoque -= r.quantidade;
+			produto.save();
+
+			original.nomeCliente = r.nomeCliente;
+			original.produto = produto;
+			original.quantidade = r.quantidade;
+			original.observacao = r.observacao;
+			original.save();
+			flash.success("Reserva atualizada com sucesso!");
+		}
 		listar(null);
 	}
 
@@ -117,7 +107,7 @@ public class Reservas extends Controller {
 	@Administrador
 	public static void remover(Long id) {
 		Reserva r = Reserva.findById(id);
-		if (r != null) {
+		if (r != null && r.status == Status.ATIVO) {
 			r.status = Status.INATIVO;
 			r.save();
 
