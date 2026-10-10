@@ -1,3 +1,9 @@
 # You can specialize this file for each language.
 # For example, for French create a messages.fr file
-# validation.required=Campo obrigatório
+# Mensagens de validação em português (substituem as padrão do Play)
+validation.required=Campo obrigatório
+validation.min=Deve ser maior ou igual a %2$s
+validation.max=Deve ser menor ou igual a %2$s
+validation.minSize=Tamanho mínimo: %2$d
+validation.maxSize=Tamanho máximo: %2$d
+validation.invalid=Valor inválido

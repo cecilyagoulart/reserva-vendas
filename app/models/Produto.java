@@ -13,7 +13,7 @@ public class Produto extends Model {
 	@Required
 	public String nomeProduto;
 
-	@Min(value = 0, message = "O preço não pode ser negativo")
+	@Min(value = 0.01, message = "O preço mínimo é R$ 0,01")
 	public double preco;
 
 	@Min(value = 0, message = "O estoque não pode ser negativo")
