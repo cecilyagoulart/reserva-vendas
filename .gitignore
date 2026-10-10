@@ -9,3 +9,5 @@ logs/
 precompiled/
 test-result/
 /bin/
+db/
+data/
