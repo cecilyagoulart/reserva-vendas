@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 
 import play.data.validation.Min;
 import play.data.validation.Required;
+import play.db.jpa.Blob;
 import play.db.jpa.Model;
 
 @Entity
@@ -17,6 +18,8 @@ public class Produto extends Model {
 
 	@Min(value = 0, message = "O estoque não pode ser negativo")
 	public int estoque;
+
+	public Blob foto;
 
 	public String toString() {
 		return nomeProduto;

@@ -34,9 +34,12 @@
                     <div class="mb-3">
                         <label class="form-label">Produto</label>
                         <select name="r.produto.id" class="form-select">
-                            #{list items:produtos, as:'prod'}
-                            <option value="${prod.id}" ${prod.id == r?.produto?.id ? 'selected' : ''}>
+                             #{list items:produtos, as:'prod'}
+                            <option value="${prod.id}"
+                                    ${prod.id == r?.produto?.id ? 'selected' : ''}
+                                    ${(prod.estoque <= 0 && prod.id != r?.produto?.id) ? 'disabled' : ''}>
                                 ${prod.nomeProduto} — R$ ${prod.preco}
+                                ${prod.estoque <= 0 ? '(esgotado)' : '(' + prod.estoque + ' em estoque)'}
                             </option>
                             #{/list}
                         </select>

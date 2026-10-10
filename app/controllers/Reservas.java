@@ -10,6 +10,11 @@ import play.mvc.Controller;
 import play.mvc.With;
 import security.Seguranca;
 import security.Administrador;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import play.db.jpa.Blob;
+import play.libs.MimeTypes;
 
 @With(Seguranca.class)
 public class Reservas extends Controller {
@@ -136,9 +141,23 @@ public class Reservas extends Controller {
 	}
 
 	@Administrador
-	public static void salvarProduto(@Valid Produto p) {
+	public static void salvarProduto(@Valid Produto p, File foto) throws FileNotFoundException {
+		boolean enviouFoto = foto != null && foto.length() > 0;
+
+		if (enviouFoto) {
+			String tipo = MimeTypes.getContentType(foto.getName());
+			if (!tipo.startsWith("image/")) {
+				validation.addError("foto", "Envie um arquivo de imagem (png, jpg, gif)");
+			}
+		}
+
 		if (validation.hasErrors()) {
 			renderTemplate("Reservas/formProduto.html", p);
+		}
+
+		if (enviouFoto) {
+			p.foto = new Blob();
+			p.foto.set(new FileInputStream(foto), MimeTypes.getContentType(foto.getName()));
 		}
 
 		if (p.id != null) {
@@ -248,5 +267,13 @@ public class Reservas extends Controller {
 		}
 
 		render(vendas, inicio, fim, totalUnidades, valorTotal);
+	}
+	public static void verFoto(Long id) {
+		Produto produto = Produto.findById(id);
+		if (produto == null || produto.foto == null || !produto.foto.exists()) {
+			notFound("Imagem não encontrada");
+		}
+		response.setContentTypeIfNotSet(produto.foto.type());
+		renderBinary(produto.foto.get());
 	}
 }

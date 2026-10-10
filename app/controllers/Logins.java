@@ -23,7 +23,7 @@ public class Logins extends Controller{
 		session.put("perfilUsuario", usuario.perfil.name());
 
 		flash.success("Bem-vindo(a), " + usuario.nome + "!");
-		Reservas.listar(null);
+		Application.index();
 	}
 
 	public static void sair() {

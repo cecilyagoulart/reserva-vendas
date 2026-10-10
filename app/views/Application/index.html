@@ -1,3 +1,90 @@
 #{extends 'main.html' /}
-#{set title:'Home' /}
+#{set title:'Início' /}
 
+<div class="page-header">
+    <div>
+        <h1><i class="bi bi-speedometer2"></i> Início</h1>
+        <p class="text-muted mb-0">Resumo de hoje</p>
+    </div>
+    <a href="@{Reservas.forms}" class="btn btn-brand">
+        <i class="bi bi-plus-lg"></i> Nova Reserva
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-icon"><i class="bi bi-receipt"></i></div>
+            <div>
+                <div class="stat-value">${vendasHoje}</div>
+                <div class="text-muted small">Vendas hoje</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-icon"><i class="bi bi-cash-coin"></i></div>
+            <div>
+                <div class="stat-value">R$ ${valorHoje.format('0.00')}</div>
+                <div class="text-muted small">Valor de hoje</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-icon"><i class="bi bi-bag-check-fill"></i></div>
+            <div>
+                <div class="stat-value">${totalReservas}</div>
+                <div class="text-muted small">Reservas ativas</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-icon"><i class="bi bi-trophy-fill"></i></div>
+            <div>
+                <div class="stat-value" style="font-size: 1.2rem;">${maisVendido}</div>
+                <div class="text-muted small">Mais vendido (${qtdMaisVendido} un.)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h5 class="mb-3" style="color: var(--brand-blue); font-weight: 700;">
+    <i class="bi bi-exclamation-triangle-fill" style="color: var(--brand-gold);"></i> Estoque baixo ou esgotado
+</h5>
+
+<div class="card table-card">
+    <table class="table table-hover align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Estoque</th>
+            </tr>
+        </thead>
+        <tbody>
+            #{list items:estoqueBaixo, as:'prod'}
+            <tr>
+                <td>${prod.nomeProduto}</td>
+                <td>
+                    #{if prod.estoque <= 0}
+                        <span class="badge badge-status-inativo">Esgotado</span>
+                    #{/if}
+                    #{else}
+                        <span class="badge bg-warning text-dark">${prod.estoque} un. (baixo)</span>
+                    #{/else}
+                </td>
+            </tr>
+            #{/list}
+
+            #{else}
+            <tr>
+                <td colspan="2" class="text-center text-muted py-4">
+                    <i class="bi bi-check-circle display-6 d-block mb-2"></i>
+                    Nenhum produto com estoque baixo.
+                </td>
+            </tr>
+            #{/else}
+        </tbody>
+    </table>
+</div>

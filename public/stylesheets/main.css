@@ -210,3 +210,30 @@ body {
 .footer-social i {
     color: var(--brand-gold);
 }
+
+/* ===== Impressão (relatório de vendas) ===== */
+@media print {
+    .sidebar,
+    .app-footer,
+    .alert {
+        display: none !important;
+    }
+
+    body {
+        background-color: #fff;
+    }
+
+    .main-content {
+        padding: 0;
+    }
+
+    .stat-card,
+    .table-card {
+        box-shadow: none;
+    }
+
+    .table-card thead {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
