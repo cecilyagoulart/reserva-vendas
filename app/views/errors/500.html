@@ -2,20 +2,43 @@
 
 <html>
     <head>
-        <title>Application error</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=${_response_encoding}"/>
+        <title>Erro no sistema</title>
+        <meta charset="${_response_encoding}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="@{'/public/stylesheets/main.css'}">
     </head>
-    <body>
-        #{if play.mode.name() == 'DEV'}
-            #{500 exception /}
-        #{/if}
-        #{else}
-            <h1>Oops, an error occurred</h1>
-            #{if exception instanceof play.exceptions.PlayException}
-                <p>
-                    This exception has been logged with id <strong>${exception.id}</strong>.
-                </p>
-            #{/if}
-        #{/else}
+    <body class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+
+        <div style="width: 100%; max-width: 640px; padding: 16px;">
+            <div class="card form-card">
+                <div class="card-body p-4 text-center">
+                    <h1 style="color: var(--brand-blue); font-weight: 800;">
+                        <i class="bi bi-exclamation-triangle-fill" style="color: var(--brand-gold);"></i> Ops! Ocorreu um erro
+                    </h1>
+                    <p class="text-muted">
+                        Não foi possível concluir sua solicitação. Tente novamente ou volte para a tela inicial.
+                    </p>
+
+                    #{if exception instanceof play.exceptions.PlayException}
+                        <p class="small text-muted">
+                            Código do erro: <strong>${exception.id}</strong>
+                        </p>
+                    #{/if}
+
+                    #{if play.mode.name() == 'DEV' && exception instanceof play.exceptions.PlayException}
+                        <div class="alert alert-warning text-start small">
+                            <strong>${exception.errorTitle}</strong><br/>
+                            ${exception.errorDescription.raw()}
+                        </div>
+                    #{/if}
+
+                    <a href="javascript:history.back()" class="btn btn-outline-dark">Voltar</a>
+                    <a href="@{Reservas.listar}" class="btn btn-brand">Ir para Reservas</a>
+                </div>
+            </div>
+        </div>
+
     </body>
 </html>

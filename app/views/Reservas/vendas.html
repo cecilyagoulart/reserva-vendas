@@ -1,0 +1,92 @@
+#{extends 'main.html' /}
+#{set title:'Vendas' /}
+
+<div class="page-header">
+    <div>
+        <h1><i class="bi bi-cash-coin"></i> Vendas</h1>
+        <p class="text-muted mb-0">Vendas já registradas no sistema. Filtre por período.</p>
+    </div>
+</div>
+
+<form action="@{Reservas.vendas}" method="GET" class="row g-2 align-items-end mb-4">
+    <div class="col-md-3">
+        <label class="form-label">Data inicial</label>
+        <input type="date" name="inicio" value="${inicio?.format('yyyy-MM-dd')}" class="form-control">
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Data final</label>
+        <input type="date" name="fim" value="${fim?.format('yyyy-MM-dd')}" class="form-control">
+    </div>
+    <div class="col-md-auto d-flex gap-2">
+        <button type="submit" class="btn btn-brand">
+            <i class="bi bi-funnel"></i> Filtrar
+        </button>
+        <a href="@{Reservas.vendas}" class="btn btn-outline-secondary">Limpar</a>
+    </div>
+</form>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-icon"><i class="bi bi-receipt"></i></div>
+            <div>
+                <div class="stat-value">${vendas.size()}</div>
+                <div class="text-muted small">Vendas no período</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
+            <div>
+                <div class="stat-value">${totalUnidades}</div>
+                <div class="text-muted small">Unidades vendidas</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-icon"><i class="bi bi-currency-dollar"></i></div>
+            <div>
+                <div class="stat-value">R$ ${valorTotal.format('0.00')}</div>
+                <div class="text-muted small">Valor total</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card table-card">
+    <table class="table table-hover align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Cliente</th>
+                <th>Produto</th>
+                <th>Qtd</th>
+                <th>Obs.</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            #{list items:vendas, as:'v'}
+            <tr>
+                <td>${v.data?.format('dd/MM/yyyy')}</td>
+                <td>${v.nomeCliente}</td>
+                <td>${v.produto?.nomeProduto}</td>
+                <td>${v.quantidade}</td>
+                <td class="small text-muted">${v.observacao}</td>
+                <td>R$ ${v.valorTotal.format('0.00')}</td>
+            </tr>
+            #{/list}
+
+            #{else}
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    <i class="bi bi-inbox display-6 d-block mb-2"></i>
+                    Nenhuma venda encontrada neste período.
+                </td>
+            </tr>
+            #{/else}
+        </tbody>
+    </table>
+</div>

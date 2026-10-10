@@ -12,6 +12,13 @@
 
 <div class="row justify-content-center">
     <div class="col-md-7">
+
+        #{ifErrors}
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle-fill"></i> Revise as informações do formulário.
+        </div>
+        #{/ifErrors}
+
         <div class="card form-card">
             <div class="card-body p-4">
                 <form action="@{Reservas.salvar}" method="post">
@@ -20,7 +27,8 @@
                     <div class="mb-3">
                         <label class="form-label">Cliente</label>
                         <input type="text" name="r.nomeCliente" value="${r?.nomeCliente}"
-                               class="form-control" placeholder="Nome do cliente" required>
+                               class="form-control" placeholder="Nome do cliente">
+                        <span class="text-danger small">#{error 'r.nomeCliente' /}</span>
                     </div>
 
                     <div class="mb-3">
@@ -32,13 +40,16 @@
                             </option>
                             #{/list}
                         </select>
+                        <span class="text-danger small">#{error 'r.produto' /}</span>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label">Quantidade</label>
                         <input type="number" name="r.quantidade" value="${r?.quantidade}"
-                               class="form-control" min="1" required>
+                               class="form-control">
+                        <span class="text-danger small">#{error 'r.quantidade' /}</span>
                     </div>
+
                     <div class="mb-4">
                         <label class="form-label">Observação / Sabor</label>
                         <textarea name="r.observacao" class="form-control" rows="3"
