@@ -16,7 +16,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="bi bi-exclamation-triangle-fill text-warning"></i> Confirmar exclusão
+                        <i class="bi bi-exclamation-triangle-fill text-warning"></i> <span id="modalConfirmarTitulo">Confirmar exclusão</span>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -24,7 +24,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <a href="#" id="modalConfirmarBotao" class="btn btn-danger">
-                        <i class="bi bi-trash"></i> Excluir
+                        <i id="modalConfirmarIcone" class="bi bi-trash"></i> <span id="modalConfirmarRotulo">Excluir</span>
                     </a>
                 </div>
             </div>
@@ -39,7 +39,16 @@
             }
             e.preventDefault();
             document.getElementById('modalConfirmarTexto').textContent = link.getAttribute('data-confirmar');
-            document.getElementById('modalConfirmarBotao').setAttribute('href', link.getAttribute('href'));
+            var botao = document.getElementById('modalConfirmarBotao');
+            var sucesso = link.getAttribute('data-confirmar-tipo') === 'sucesso';
+            document.getElementById('modalConfirmarTitulo').textContent =
+                link.getAttribute('data-confirmar-titulo') || 'Confirmar exclusão';
+            document.getElementById('modalConfirmarRotulo').textContent =
+                link.getAttribute('data-confirmar-botao') || 'Excluir';
+            document.getElementById('modalConfirmarIcone').className =
+                'bi ' + (sucesso ? 'bi-check-lg' : 'bi-trash');
+            botao.className = 'btn ' + (sucesso ? 'btn-success' : 'btn-danger');
+            botao.setAttribute('href', link.getAttribute('href'));
             new bootstrap.Modal(document.getElementById('modalConfirmar')).show();
         });
     </script>

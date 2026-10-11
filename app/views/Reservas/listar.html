@@ -59,6 +59,14 @@
                     </span>
                 </td>
                 <td class="text-end">
+                    <a href="@{Reservas.retirar(res.id)}" class="btn btn-outline-success btn-sm"
+                       title="Confirmar retirada"
+                       data-confirmar="O cliente ${res.nomeCliente} já retirou o produto? A reserva sai da lista, mas a venda continua no histórico e o estoque não volta."
+                       data-confirmar-titulo="Confirmar retirada"
+                       data-confirmar-botao="Confirmar retirada"
+                       data-confirmar-tipo="sucesso">
+                        <i class="bi bi-check2-circle"></i> Retirou
+                    </a>
                     <a href="@{Reservas.editar(res.id)}" class="btn btn-outline-dark btn-sm">
                         <i class="bi bi-pencil"></i>
                     </a>
