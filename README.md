@@ -1,40 +1,36 @@
-# **INFO4V Reservas**
+**INFO4V Reservas**
 
-# 
+ 
 
-# Sistema web interno para controle de reservas de vendas e estoque de produtos, desenvolvido com Play Framework 1.x.
+ Sistema web interno para controle de reservas de vendas e estoque de produtos, desenvolvido com Play Framework 1.x.
 
-# 
 
-* # Como executar
+- Como executar
 
-# 
 
-# Rode play run. Acesse `http://localhost:9000'.
+Rode play run. Acesse `http://localhost:9000'.
 
-# 
 
-# | Perfil   | Login      | Senha      |
 
-# |----------|------------|------------|
+ | Perfil   | Login      | Senha      |
 
-# | ADMIN    | `admin`    | `admin123` |
+ |----------|------------|------------|
 
-# | OPERADOR | `operador` | `op123`    |
+ | ADMIN    | `admin`    | `admin123` |
 
-# 
+| OPERADOR | `operador` | `op123`    |
+
+
 
 * # &#x20;Diagrama de classes
 
-# 
 
 # !\[Diagrama de classes](docs/diagramaReserva.png)
 
-# 
+ 
 
 * # &#x20;Regras de validação
-
-# 
+ 
 
 # \- Nome do cliente e produto são obrigatórios; a quantidade deve ser maior que zero.
 
@@ -48,11 +44,11 @@
 
 # \- Produto com reservas ou vendas vinculadas não pode ser excluído.
 
-# 
+
 
 * # Segurança
 
-# 
+
 
 # Os controllers `Reservas` e `Application` usam `@With(Seguranca.class)`. Antes de cada ação, o interceptador confere se há usuário logado e, nas ações marcadas com `@Administrador`, se o perfil é ADMIN.
 
