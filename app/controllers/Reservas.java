@@ -28,10 +28,10 @@ public class Reservas extends Controller {
 	public static void listar(String termo) {
 		List<Reserva> reservas;
 		if (termo == null || termo.isEmpty()) {
-			reservas = Reserva.find("status != ?1", Status.INATIVO).fetch();
+			reservas = Reserva.find("status = ?1", Status.ATIVO).fetch();
 		} else {
-			reservas = Reserva.find("status != ?1 and (lower(nomeCliente) like ?2 or lower(produto.nomeProduto) like ?2)",
-					Status.INATIVO, "%" + termo.toLowerCase() + "%").fetch();
+			reservas = Reserva.find("status = ?1 and (lower(nomeCliente) like ?2 or lower(produto.nomeProduto) like ?2)",
+					Status.ATIVO, "%" + termo.toLowerCase() + "%").fetch();
 		}
 		render(reservas, termo);
 	}
@@ -42,7 +42,7 @@ public class Reservas extends Controller {
 		Reserva original = null;
 		if (idReserva != null) {
 			original = Reserva.findById(idReserva);
-			if (original == null || original.status == Status.INATIVO) {
+			if (original == null || original.status != Status.ATIVO) {
 				flash.error("Reserva não encontrada.");
 				listar(null);
 			}
@@ -100,8 +100,29 @@ public class Reservas extends Controller {
 		if (r == null) {
 			notFound("Reserva não encontrada");
 		}
+		if (r.status != Status.ATIVO) {
+			flash.error("Só é possível editar reservas que ainda não foram retiradas.");
+			listar(null);
+		}
 		List<Produto> produtos = Produto.findAll();
 		renderTemplate("Reservas/forms.html", r, produtos);
+	}
+
+	// Confirma que o cliente já retirou o produto: a reserva sai da lista,
+	// a venda continua no histórico e o estoque NÃO volta (o produto saiu).
+	public static void retirar(Long id) {
+		Reserva r = Reserva.findById(id);
+		if (r == null) {
+			notFound("Reserva não encontrada");
+		}
+		if (r.status != Status.ATIVO) {
+			flash.error("Esta reserva já foi retirada ou removida.");
+			listar(null);
+		}
+		r.status = Status.ENTREGUE;
+		r.save();
+		flash.success("Retirada confirmada! A venda continua no histórico.");
+		listar(null);
 	}
 
 	@Administrador
@@ -211,7 +232,7 @@ public class Reservas extends Controller {
 		if (p != null) {
 			long qtdAtivas = Reserva.count("produto.id = ?1 and status != ?2", id, Status.INATIVO);
 			if (qtdAtivas > 0) {
-				flash.error("Não é possível excluir '" + p.nomeProduto + "': existem reservas ativas vinculadas a ele.");
+				flash.error("Não é possível excluir '" + p.nomeProduto + "': existem reservas ou vendas vinculadas a ele.");
 			} else {
 				try {
 					List<Reserva> reservasInativas = Reserva.find("produto.id = ?1", id).fetch();

@@ -72,6 +72,7 @@
                 <th>Qtd</th>
                 <th>Obs.</th>
                 <th>Valor</th>
+                <th>Situação</th>
             </tr>
         </thead>
         <tbody>
@@ -83,12 +84,20 @@
                 <td>${v.quantidade}</td>
                 <td class="small text-muted">${v.observacao}</td>
                 <td>R$ ${v.valorTotal.format('0.00')}</td>
+                <td>
+                    #{if v.status?.name() == 'ENTREGUE'}
+                        <span class="badge bg-success">Retirado</span>
+                    #{/if}
+                    #{else}
+                        <span class="badge bg-warning text-dark">Reservada</span>
+                    #{/else}
+                </td>
             </tr>
             #{/list}
 
             #{else}
             <tr>
-                <td colspan="6" class="text-center text-muted py-4">
+                <td colspan="7" class="text-center text-muted py-4">
                     <i class="bi bi-inbox display-6 d-block mb-2"></i>
                     Nenhuma venda encontrada neste período.
                 </td>

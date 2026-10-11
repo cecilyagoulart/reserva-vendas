@@ -33,12 +33,14 @@ public class Application extends Controller {
 			valorHoje += r.getValorTotal();
 		}
 
-		// Reservas ativas e produto mais vendido
-		List<Reserva> ativas = Reserva.find("status != ?1", Status.INATIVO).fetch();
-		int totalReservas = ativas.size();
+		// Reservas ativas (ainda não retiradas)
+		int totalReservas = (int) Reserva.count("status = ?1", Status.ATIVO);
+
+		// Produto mais vendido: reservas ativas e já retiradas
+		List<Reserva> vendidas = Reserva.find("status != ?1", Status.INATIVO).fetch();
 
 		Map<String, Integer> porProduto = new HashMap<String, Integer>();
-		for (Reserva r : ativas) {
+		for (Reserva r : vendidas) {
 			if (r.produto != null) {
 				String nome = r.produto.nomeProduto;
 				Integer atual = porProduto.get(nome);
