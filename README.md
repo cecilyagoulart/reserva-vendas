@@ -22,14 +22,14 @@ Rode play run. Acesse `http://localhost:9000'.
 
 
 
-* # &#x20;Diagrama de classes
+ # &#x20;Diagrama de classes
 
 
 # !\[Diagrama de classes](docs/diagramaReserva.png)
 
  
 
-* # &#x20;Regras de validação
+ # &#x20;Regras de validação
  
 
 # \- Nome do cliente e produto são obrigatórios; a quantidade deve ser maior que zero.
@@ -46,7 +46,7 @@ Rode play run. Acesse `http://localhost:9000'.
 
 
 
-* # Segurança
+ # Segurança
 
 
 
